@@ -1,0 +1,130 @@
+파일 실행은 main 폴더 안의 Application class 파일 내의 메인 함수를 실행하면 된다.
+
+
+Spring 은 정적파일을 resources 폴더 안의 static 에닥 보관해 놓는다.
+이때, 해당 링크 즉 localhost:8080/파일 경로 를 url 에 입력하면 해당 링크에 맞는 정적파일을 serving 해준다.
+
+이는 내장 톰켓 서버가 해당 요청을 받아 Controller 가 우선순위를 받아 hellow-static 관한 컨트롤러가 있는지 확인한다.
+이후 해당 컨트롤러가 없으면 resources 에서 해당하는 파일을 불러오게 되는 것이다. nginx 와 같은 역할인가?
+
+웹 서버의 역할을 톰켓 서버 가 해주는 것 같다.
+
+----> 하단은 컨트롤러가 있을 경우.
+
+MVC 모델
+
+Model View Controller
+-> django 의 View 와는 어떻게 다른가?
+
+Controller 는 javs 폴더 안에 
+Controller 에
+    @GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam("name") String name, Model model){
+        model.addAttribute("name",name);
+        return "hello-template";
+    }
+
+
+여기에서의 @GetMapping 은 url 을 위미한다. urls.py 와 유사
+이렇게 가져온 name 을 model에 담아서 hello-template.html 으로 넘겨준다.
+django에서도 유사한 개념 있었음.
+
+<-- hello-templates.html -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="'hello ' + ${name}">hello! empty</p>
+</body>
+</html>
+
+
+
+
+이때의 @RequestParam 은 request 받아온 값을 바로 Parameter 로 쓸 수 있게 해주는 방법이다.
+
+Ex)
+
+@RequestMapping("/save")
+public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+    String username = request.getParameter("username");
+    int age = Integer.parseInt(request.getParameter("age"));
+    ...
+}
+
+---> 아래로 변경
+
+@PostMapping("/save")
+public String save(@RequestParam("username") String username, @RequestParam("age") int age, Model model) {
+    ...
+}
+
+출처: https://ittrue.tistory.com/243 [IT is True:티스토리]
+
+
+
+@GetMapping("hello-string")
+@ResponseBody
+    public String helloString(@RequestParam("name") String name) {
+        return "hello " + name;
+}
+
+@ResponsesBody 
+html 에서 HTTP 에서의 body를 의미한다. 
+해당 BODY 부에 직접 값을 넣어주는 것을 의미힌다.
+
+만약 위의 코드의 실행 결과는 아래와 같다.
+localhost:8080/hello-string?name=nananana
+
+이면 hello nananana 만 표시하고 다른 HTML 파일들은 없다.
+즉 해당 데이터를 그대로 전달해주는 방식이다. 즉 HTTP 의 body 만 전달하는 방식이다.
+
+따라 이것을 API 에서 데이터를 주고 받을 때 사용한다.(json 타입으로)
+객체는 json 객체가 아니면 text로 
+
+객체를 json 으로 바꾸어주는 라이브러리 MappingJackson2 를 Spring은 기본으로 사용한다. 실무에서도 대부분 사용한다.
+명시를 따로 해주지 않으면 따라 XML 이 아니라 json 으로 번역이 된다.
+요새는 사실 json만 주로 사용한다.
+
+
+
+
+getter setter  공부 필요!  
+inteelij Alt  + insert
+
+getter 와 setter 란 java의 객체지향 방식의 메소드이다.
+원본 파일의 무결성을 유지해야 하므로 해당 방식의 메소드들을 사용한다. (ex. 자동차의 속도 값)
+
+이때 getter 는 읽을 때, setter 을 설정할 때 이다.
+사용하는 방법은 get/set + [첫글자 대문자인 변수명] 이다.
+
+
+    static class Hello{
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
+    @GetMapping("hello-api")
+    @ResponseBody
+    public Hello helloApi(@RequestParam("name") String name){
+        Hello hello = new Hello();
+        hello.setName(name);
+        return hello;
+    }
+
+
+
+
+
+
+
+
+
+
+
