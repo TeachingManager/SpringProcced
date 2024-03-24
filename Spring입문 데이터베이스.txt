@@ -13,3 +13,41 @@ template 를 사용할 때, 해당 class 는 injection 을 받을 수 있지 않
 자세한 내용은 공식 문서 참조
 
 -----------------------------------------------
+
+JPA 도 사용하기 위해서는 build.gradle 에 라이브러리를 추가해야한다. main.py 나 settings.py 와 비슷한 역할인듯...?
+이렇게 gradle 에 라이브러리 추가한 뒤 refresh 버튼을 눌러주어야 적용이 된다.
+
+이후 resources 디렉토리 안의 application.properties 파일 안에
+spring.jpa.show-sql=true                     -> sql 문을 볼 수 있게 해준다.
+spring.jpa.hibernate.ddl-auto=none
+
+auto를 해제한 이유는 jpa 가 객체를 읽고 테이블을 자동 생성해주는데, 이번 강의에서는
+이미 만들어놓은 테이블을 사용할 것이기 때문이다.
+
+을 넣어야 한다.
+
+JPA 는 일종의 인터페이스의 역할을 해준다. hibernate 을 이용해서 사용.
+이것도 일종의 ORM 과 같은 기능을 해준다.
+
+이후 models.py와 같은 역할을 하는 domain 에 선언된 class 에 선언해주어야한다.
+@Entity 라는 컴포넌트를 class 위에 붙여 사용하고
+@Id @GeneratedValue(strategy = GenerationType.IDENTITY) 을 기본키 속성 위에 붙여준다.
+이때 IDENTITY 는 DB 가 알아서 생성해 줌을 의미한다.
+
+
+이후 repository 에 새 DB 연결을 해주기 위해 새 클래스를 만들어주고,
+EntityManager 를 private final 로 선언해준다.
+JPA 는 이 EntityManager 로 모든 동작이 실행된다.
+
+이때 findAll 을 보면
+sql 문을 Entity 즉 객체를 대상으로 날릴 수 있다.
+이때 기존에 select 문으로 불러온 정보를 재매핑해야하는 것과 달리 해당 jpql 기술은 이미 매핑이 되어있으므로 상관이 없다.
+
+여기에서 spring 데이터 jpa 를 사용하면 여전히 findName, findById 에 jpql 명령어를 써야하는 것을 생략가능하다고 한다....
+
+
+###### 이때 상단에 @Transactional 이라는 컴포넌트를 붙여 주어서 안정성을 확보해야한다.
+
+
+-----------------------
+
