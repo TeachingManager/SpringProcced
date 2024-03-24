@@ -1,0 +1,37 @@
+Controller 가 정적파일 보다 우선순위가 높다.
+
+이는 앞서 배웠던 진행 과정에서도 알수 있다.
+
+우선 해당하는 Controller 가 있는지 체크후 없으면 파일을 serving 한다.
+
+
+
+------------------ 회원가입-----------------------
+
+Html 에서  <form> 태그로 가져온 값을 받아오기 위해서 사전에 forms.py 에서 설정해주는 것과 같이
+controller 에서 Form 클래스를 하나 만들어주고 안에 getter, setter 을 설정해준다.
+
+이후 해당 정보를 받길 원하는 controller 안에 @PostMapping("post 요청이 들어온 경로")라는 컴포넌트를 붙인다.
+
+@GetMapping Get 방식, @PostMapping Post 방식 요청을 처리해주는 역할
+
+public String [class 명] ([Form 타입명] [Form 명]){
+	원하는 동작.... ex join
+
+	return "리다이렉트 주소";
+}
+
+
+------------------조회--------------
+
+model.addAttribute("이름 ", value); 로 넘겨준 값을 
+
+HTML 에서 받는다.
+
+이때 th 는 타임리프 문법이다.
+
+<tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+
+여기에서 member.id 는 private 속성에 접근할수가 없으므로 getter 방식으로 가져오게 되는 것이다.
+따라 오류가 생긴다면 getter 을 선언해주지 않았는지 체크해볼 것!
