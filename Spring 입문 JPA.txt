@@ -1,0 +1,9 @@
+
+public interface SpringDataJpaMemberRespository extends JpaRepository<Member,Long>, 다중상속
+{}
+
+처럼 spring JPA 에 내장된 jpaRepository 를 extends 해서 받아온 인터페이스들은
+스프링 빈이 자동으로 넣어준다.
+
+이때 jpaRepository 는 findByName 과 같이 이미 내장된 인터페이스 내 메소드를 사용할 수 있다.
+또한 이는 페이징 기능까지 자동으로 제공해준다.
