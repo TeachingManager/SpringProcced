@@ -124,6 +124,12 @@ private final List<DiscountPolicy> policies;
 처럼 받을 수 있다.
 
 
+### 자동 vs 수동 등록 ####
+
+기술 지원 로직 -> 수동
+비즈니스 지원 로직 -> 자동
+비즈니스 지원 로직 중 다형성 활용 -> 수동 추천
+
 
 
 

@@ -1,0 +1,24 @@
+의존 관계 주입이 끝난 후에 초기화를 해야한다.
+스프링 컨테이너가 주는 초기화 콜백 이후에 초기화를 해야한다.
+
+1. 
+implements InitializingBean, DisposableBean 을 상속받아 
+각각에서 받은 초기화, 소멸 콜백을 이용한다.
+
+2. bean 등록시, 
+@Bean(initMethod = "메소드명", destoryMethod = "메소드명")
+사용
+1과 달리 외부 라이브러리에도 적용 가능
+%% destoryMethod 는 추론 기능을 제공하여, 쓰지 않아도 Bean 이 자동으로 close, shutdown 을 알아서 실행시켜준다.
+끄고 싶으면, destoryMethod=""
+
+3. @@@ 주로 사용하는 방법
+@PostConstruct, @PreDestory
+자바 표준 인터페이스이다.
+다른 컨테이너에서도 자공함
+
+단!!!  외부 라이브러리에서는 사용하지 못한다.
+
+
+
+
