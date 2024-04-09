@@ -1,0 +1,50 @@
+웹스코프
+ request 가 들어올때에 생성되고, 나갈 때까지만 유지되는 스코프
+
+서로 다른 HTTP request 마다 다른 bean 이 만들어진다.
+이때 , 클라이언트 A, 와 B는 서로 다른 HTTP request 를 보내므로 동시에 
+같은 컨테이너에 request 를 보내도 상관 없다.
+
+웹라이브러리를 build.gradle 에 추가한다.
+implementation 'org.springframework.boot:spring-boot-starter-web'
+
+여러명의 고객의 요청이 들어올 때,
+request 스코프를 사용한다면, 어떤 요청이 남긴 로그인지 구분하기 쉬워진다.
+메인 싱글톤 빈이 실행될때, 해당 url 을 받아서 이 웹스코프 안의 빈을 생성하는 것이다.
+
+@@@ 이때 이 request scope 는 고객이 들어와서 나갈 때 까지 유지 된다.
+그러나 Spring Container 가 D.I 를 진행할 때, 아직 HTTP request 가 들어오지 않았으므로, 생성이 불가능해서
+D.I 도 불가능하다.
+
+----> Provider 을 사용한다.
+
+
+
+와 같이 각각의 request 마다 구별하여 확인 가능하다.
+[4a76fda5-2615-470e-9a74-924ba84c8eca] request scope bean created : hello.core.common.MyLogger@5e778ceb
+[4a76fda5-2615-470e-9a74-924ba84c8eca][http://localhost:8080/log-demo]controller test
+[4a76fda5-2615-470e-9a74-924ba84c8eca][http://localhost:8080/log-demo]service id = testid
+[4a76fda5-2615-470e-9a74-924ba84c8eca] request scope bean closing : hello.core.common.MyLogger@5e778ceb
+[820cd074-7b42-4987-ac1f-3a1189d3f9ce] request scope bean created : hello.core.common.MyLogger@4fca913f
+[820cd074-7b42-4987-ac1f-3a1189d3f9ce][http://localhost:8080/log-demo]controller test
+[820cd074-7b42-4987-ac1f-3a1189d3f9ce][http://localhost:8080/log-demo]service id = testid
+[820cd074-7b42-4987-ac1f-3a1189d3f9ce] request scope bean closing : hello.core.common.MyLogger@4fca913f
+
+여러 쓰레드는 병렬 처리가 되는데,
+싱글 톤으로 작동하는 스프링 컨테이너라도,
+각각의 request 에 따른 다른 웹스코프 빈과 연결시켜주기 때문에, 내용이 겹치지 않는다.
+
+
+
+#proxymode
+가짜를 주입해주는 것
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS) //interface는 CLASS 대신 INTERFACE 로
+
+Spring Container 에서 DI 를 등록시킬 때, 프록시로 만들어진 가짜 객체가 주입이된다.
+실제 요청이 올때 진자 빈을 요청하는 위임 로직이 들어있다.
+이 가짜 프록시 개체는 마치 싱글톤 처럼 반응한다. 이 안에는 위임로직이 들어가 있어 실제 요청이 올 때 진짜 객체를 반환해준다.
+그러나 진짜 싱글톤은 아니다.
+
+
+
+
